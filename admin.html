@@ -1,0 +1,2320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZXKO Marketplace - Admin Dashboard</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #050505;
+            --card-bg: #0d0d0d;
+            --card-border: #1a1a1a;
+            --accent-color: #ff3333;
+            --accent-hover: #e60000;
+            --text-color: #e0e0e0;
+            --text-muted: #777777;
+            --input-bg: #141414;
+            --input-border: #222222;
+            --shadow: 0 8px 30px rgba(0, 0, 0, 0.7);
+            --neon-glow: 0 0 15px rgba(255, 51, 51, 0.35);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Login Screen */
+        #login-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: radial-gradient(circle at center, #150505 0%, #050505 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 0.5s ease, transform 0.5s ease;
+        }
+
+        .login-card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            padding: 40px;
+            border-radius: 16px;
+            width: 100%;
+            max-width: 400px;
+            box-shadow: var(--shadow);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .login-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, var(--accent-color), #ff6666);
+        }
+
+        .login-logo {
+            font-size: 32px;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 10px;
+            letter-spacing: 2px;
+        }
+
+        .login-logo span {
+            color: var(--accent-color);
+        }
+
+        .login-card h3 {
+            font-size: 18px;
+            font-weight: 500;
+            margin-bottom: 25px;
+            color: var(--text-muted);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .form-input {
+            width: 100%;
+            background: var(--input-bg);
+            border: 1px solid var(--input-border);
+            color: #fff;
+            padding: 12px 16px;
+            border-radius: 8px;
+            font-size: 15px;
+            font-family: inherit;
+            outline: none;
+            transition: all 0.3s;
+        }
+
+        .form-input:focus {
+            border-color: var(--accent-color);
+            box-shadow: 0 0 10px rgba(255, 51, 51, 0.15);
+        }
+
+        .btn {
+            background: var(--accent-color);
+            color: #fff;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(255, 51, 51, 0.2);
+            font-family: inherit;
+        }
+
+        .btn:hover {
+            background: var(--accent-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 51, 51, 0.35);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        /* App Wrapper */
+        #admin-app {
+            display: none;
+            min-height: 100vh;
+        }
+
+        /* Navigation Sidebar */
+        .sidebar {
+            width: 260px;
+            background: var(--card-bg);
+            border-right: 1px solid var(--card-border);
+            height: 100vh;
+            position: fixed;
+            top: 0;
+            left: 0;
+            padding: 30px 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            z-index: 100;
+        }
+
+        .sidebar-brand {
+            font-size: 24px;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 40px;
+            text-align: center;
+            letter-spacing: 1px;
+        }
+
+        .sidebar-brand span {
+            color: var(--accent-color);
+        }
+
+        .sidebar-menu {
+            list-style: none;
+            flex-grow: 1;
+        }
+
+        .menu-item {
+            margin-bottom: 10px;
+        }
+
+        .menu-link {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 12px 18px;
+            color: var(--text-color);
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 500;
+            font-size: 15px;
+            transition: all 0.3s;
+            border: 1px solid transparent;
+        }
+
+        .menu-link:hover {
+            background: rgba(255, 51, 51, 0.05);
+            color: #fff;
+            border-color: rgba(255, 51, 51, 0.1);
+        }
+
+        .menu-link.active {
+            background: var(--accent-color);
+            color: #fff;
+            box-shadow: var(--neon-glow);
+        }
+
+        .sidebar-footer {
+            text-align: center;
+        }
+
+        .logout-btn {
+            background: transparent;
+            border: 1px solid #331111;
+            color: #ff5555;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            width: 100%;
+            transition: all 0.3s;
+        }
+
+        .logout-btn:hover {
+            background: rgba(255, 85, 85, 0.1);
+            border-color: #ff5555;
+        }
+
+        /* Main Content Panel */
+        .main-content {
+            margin-left: 260px;
+            padding: 40px;
+            min-height: 100vh;
+        }
+
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            border-bottom: 1px solid var(--card-border);
+            padding-bottom: 20px;
+        }
+
+        .page-title h1 {
+            font-size: 28px;
+            font-weight: 700;
+            color: #fff;
+        }
+
+        .page-title p {
+            font-size: 14px;
+            color: var(--text-muted);
+            margin-top: 5px;
+        }
+
+        /* Content Sections */
+        .dashboard-tab {
+            display: none;
+        }
+
+        .dashboard-tab.active {
+            display: block;
+            animation: fadeIn 0.4s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Cards and Tables */
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: var(--shadow);
+            margin-bottom: 30px;
+        }
+
+        .table-container {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+        }
+
+        th {
+            padding: 16px;
+            border-bottom: 2px solid var(--card-border);
+            color: #fff;
+            font-weight: 600;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        td {
+            padding: 16px;
+            border-bottom: 1px solid var(--card-border);
+            font-size: 14px;
+            color: var(--text-color);
+            vertical-align: middle;
+        }
+
+        tr:hover td {
+            background: rgba(255, 255, 255, 0.01);
+        }
+
+        /* Thumbnails and Badges */
+        .table-thumb {
+            width: 50px;
+            height: 50px;
+            border-radius: 8px;
+            object-fit: cover;
+            border: 1px solid var(--card-border);
+        }
+
+        .tag-badge {
+            background: #222;
+            color: #aaa;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            display: inline-block;
+        }
+
+        .tag-badge.textures { background: #331f11; color: #ff9933; }
+        .tag-badge.maps { background: #112a1a; color: #33cc66; }
+        .tag-badge.addons { background: #2a111a; color: #ff3388; }
+        .tag-badge.skins { background: #111a2a; color: #3399ff; }
+
+        /* Action Buttons */
+        .action-btns {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-sm {
+            padding: 6px 12px;
+            font-size: 12px;
+            font-weight: 600;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: inherit;
+        }
+
+        .btn-edit {
+            background: rgba(255, 255, 255, 0.05);
+            color: #e0e0e0;
+            border: 1px solid #222;
+        }
+
+        .btn-edit:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+        }
+
+        .btn-delete {
+            background: rgba(255, 51, 51, 0.1);
+            color: #ff5555;
+            border: 1px solid rgba(255, 51, 51, 0.2);
+        }
+
+        .btn-delete:hover {
+            background: var(--accent-color);
+            color: #fff;
+            border-color: transparent;
+        }
+
+        .btn-order {
+            background: #111;
+            color: #aaa;
+            border: 1px solid #222;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-order:hover {
+            background: #222;
+            color: #fff;
+        }
+
+        .btn-order:disabled {
+            opacity: 0.2;
+            cursor: not-allowed;
+        }
+
+        .order-actions {
+            display: flex;
+            gap: 5px;
+            align-items: center;
+        }
+
+        /* Modals and Forms */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(5px);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            width: 100%;
+            max-width: 650px;
+            border-radius: 16px;
+            box-shadow: var(--shadow);
+            position: relative;
+            max-height: 90vh;
+            overflow-y: auto;
+            animation: modalOpen 0.3s ease-out;
+        }
+
+        @keyframes modalOpen {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .modal-header {
+            padding: 20px 25px;
+            border-bottom: 1px solid var(--card-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h3 {
+            font-size: 20px;
+            color: #fff;
+        }
+
+        .close-modal {
+            font-size: 24px;
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+
+        .close-modal:hover {
+            color: #fff;
+        }
+
+        .modal-body {
+            padding: 25px;
+        }
+
+        .modal-footer {
+            padding: 20px 25px;
+            border-top: 1px solid var(--card-border);
+            display: flex;
+            justify-content: flex-end;
+            gap: 15px;
+        }
+
+        .btn-cancel {
+            background: #111;
+            color: #aaa;
+            border: 1px solid #222;
+        }
+
+        .btn-cancel:hover {
+            background: #222;
+            color: #fff;
+        }
+
+        /* Two columns inside form */
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        /* Dynamic array inputs */
+        .dynamic-list-container {
+            border: 1px solid var(--card-border);
+            background: #090909;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+
+        .dynamic-item-row {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+            align-items: center;
+        }
+
+        .btn-add-item {
+            background: #111;
+            color: #aaa;
+            border: 1px solid #222;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-top: 5px;
+        }
+
+        .btn-add-item:hover {
+            background: rgba(255, 51, 51, 0.05);
+            color: var(--accent-color);
+            border-color: rgba(255, 51, 51, 0.1);
+        }
+
+        /* Toast Notifications */
+        #toast {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: #0d0d0d;
+            border: 1px solid var(--accent-color);
+            box-shadow: var(--neon-glow);
+            padding: 16px 24px;
+            border-radius: 8px;
+            display: none;
+            gap: 15px;
+            align-items: center;
+            z-index: 10000;
+            animation: slideIn 0.3s ease-out;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(100px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        #toast.success {
+            border-color: #2ecc71;
+            box-shadow: 0 0 15px rgba(46, 204, 113, 0.2);
+        }
+
+        #toast.error {
+            border-color: #e74c3c;
+            box-shadow: 0 0 15px rgba(231, 76, 60, 0.2);
+        }
+
+        /* Controls header on tabs */
+        .tab-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .search-box-panel {
+            display: flex;
+            gap: 15px;
+        }
+
+        /* Responsive Layouts */
+        @media (max-width: 992px) {
+            .sidebar {
+                width: 70px;
+                padding: 30px 10px;
+            }
+            .sidebar-brand {
+                font-size: 18px;
+                margin-bottom: 30px;
+            }
+            .sidebar-brand span { display: none; }
+            .menu-link span { display: none; }
+            .logout-btn span { display: none; }
+            .main-content {
+                margin-left: 70px;
+                padding: 25px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .form-row {
+                grid-template-columns: 1fr;
+                gap: 0;
+            }
+            .tab-controls {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+            .search-box-panel {
+                width: 100%;
+            }
+            .search-box-panel input {
+                flex-grow: 1;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 1. Passcode Gateway -->
+    <div id="login-screen">
+        <div class="login-card">
+            <div class="login-logo">ZXKO<span> ADMIN</span></div>
+            <h3>Minecraft Marketplace Management</h3>
+            <form id="login-form">
+                <div class="form-group">
+                    <label>Admin Passcode</label>
+                    <input type="password" id="passcode-input" class="form-input" placeholder="••••" required autofocus autocomplete="off">
+                </div>
+                <button type="submit" class="btn">Access Panel</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- 2. Admin Dashboard Layout -->
+    <div id="admin-app">
+        
+        <!-- Sidebar Navigation -->
+        <div class="sidebar">
+            <div>
+                <div class="sidebar-brand">ZXKO<span>.M</span></div>
+                <ul class="sidebar-menu">
+                    <li class="menu-item">
+                        <a href="#" class="menu-link active" data-tab="slider-tab">
+                            <span>Main Slider</span>
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="#" class="menu-link" data-tab="side-cards-tab">
+                            <span>Side Cards</span>
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="#" class="menu-link" data-tab="sections-tab">
+                            <span>Sections List</span>
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="#" class="menu-link" data-tab="skins-tab">
+                            <span>Skins Gallery</span>
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="#" class="menu-link" data-tab="worlds-tab">
+                            <span>Worlds Gallery</span>
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="#" class="menu-link" data-tab="versions-tab">
+                            <span>MC Versions</span>
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="#" class="menu-link" data-tab="mods-tab">
+                            <span>Mods & Items</span>
+                        </a>
+                    </li>
+                    <li class="menu-item" style="margin-top: auto; border-top: 1px solid #333; padding-top: 20px;">
+                        <a href="#" class="menu-link" data-tab="settings-tab">
+                            <span style="color: #ffcc00;">⚠️ System Cleanup</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            
+            <div class="sidebar-footer">
+                <button class="logout-btn" onclick="logout()">Logout</button>
+            </div>
+        </div>
+
+        <!-- Main Panel Content -->
+        <div class="main-content">
+            
+            <!-- A. MAIN SLIDER TAB -->
+            <div id="slider-tab" class="dashboard-tab active">
+                <div class="page-header">
+                    <div class="page-title">
+                        <h1>Main Slider Carousel</h1>
+                        <p>Configure featured slides (with full dynamic details page features).</p>
+                    </div>
+                    <button class="btn" style="width: auto;" onclick="openSliderModal()">Add New Slide</button>
+                </div>
+
+                <div class="card">
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Pos</th>
+                                    <th>Thumbnail</th>
+                                    <th>Title (EN / AR)</th>
+                                    <th>Category</th>
+                                    <th>Media Types</th>
+                                    <th>Reorder</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="slider-table-body">
+                                <!-- Loaded dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- B. SIDE CARDS TAB -->
+            <div id="side-cards-tab" class="dashboard-tab">
+                <div class="page-header">
+                    <div class="page-title">
+                        <h1>Hero Side Cards</h1>
+                        <p>Add, edit, remove, and sort columns beside the main carousel (with full dynamic details pages).</p>
+                    </div>
+                    <button class="btn" style="width: auto;" onclick="openSideCardModal()">Add New Side Card</button>
+                </div>
+
+                <div class="card">
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Pos</th>
+                                    <th>Card Preview</th>
+                                    <th>Card Name (EN / AR)</th>
+                                    <th>Category Tag</th>
+                                    <th>Reorder</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="side-cards-table-body">
+                                <!-- Loaded dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- C. SECTIONS TAB -->
+            <div id="sections-tab" class="dashboard-tab">
+                <div class="page-header">
+                    <div class="page-title">
+                        <h1>Homepage Sections & Content</h1>
+                        <p>Configure the categories and manage the individual slots (items) within each section.</p>
+                    </div>
+                    <button class="btn" style="width: auto;" onclick="openSectionModal()">Create New Category</button>
+                </div>
+
+                <!-- 1. Categories Management -->
+                <div class="card">
+                    <h3 style="margin-bottom: 20px; color: #fff; font-size: 18px;">1. Section Categories</h3>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Order</th>
+                                    <th>ID / Key</th>
+                                    <th>Title (EN / AR)</th>
+                                    <th>Accent Theme</th>
+                                    <th>Items Count</th>
+                                    <th>Reorder</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="sections-table-body">
+                                <!-- Loaded dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- 2. Section Content Management (Slots) -->
+                <div class="card" id="section-items-manager" style="margin-top: 40px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                        <div>
+                            <h3 style="color: #fff; font-size: 18px;">2. Manage Section Slots</h3>
+                            <p style="font-size: 12px; color: var(--text-muted);">Select a category to manage its specific items.</p>
+                        </div>
+                        <div style="display: flex; gap: 15px;">
+                            <select id="section-selector" class="form-input" style="width: 200px;" onchange="renderSectionItemsTable()">
+                                <option value="">-- Select Section --</option>
+                                <!-- Sections loaded dynamically -->
+                            </select>
+                            <button class="btn" style="width: auto;" onclick="addNewSlotToCurrentSection()">+ Add New Slot</button>
+                        </div>
+                    </div>
+                    
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Pos</th>
+                                    <th>Thumbnail</th>
+                                    <th>Name (EN / AR)</th>
+                                    <th>Tag</th>
+                                    <th>Version</th>
+                                    <th>Reorder</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="section-items-table-body">
+                                <tr>
+                                    <td colspan="7" style="text-align: center; padding: 40px; color: var(--text-muted);">Please select a section above to manage its items.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- D. SKINS GALLERY TAB -->
+            <div id="skins-tab" class="dashboard-tab">
+                <div class="page-header">
+                    <div class="page-title">
+                        <h1>Skins Gallery</h1>
+                        <p>Manage the player skins displayed in the dedicated Skins page.</p>
+                    </div>
+                    <button class="btn" style="width: auto;" onclick="openSkinModal()">Add New Skin</button>
+                </div>
+
+                <div class="card">
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Pos</th>
+                                    <th>Preview</th>
+                                    <th>Skin Name (EN / AR)</th>
+                                    <th>Downloads</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="skins-table-body">
+                                <!-- Loaded dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- WORLDS GALLERY TAB -->
+            <div id="worlds-tab" class="dashboard-tab">
+                <div class="page-header">
+                    <div class="page-title">
+                        <h1>Worlds Gallery</h1>
+                        <p>Manage the survival worlds and maps displayed in the dedicated Worlds page.</p>
+                    </div>
+                    <button class="btn" style="width: auto;" onclick="openWorldModal()">Add New World</button>
+                </div>
+
+                <div class="card">
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Pos</th>
+                                    <th>Thumbnail</th>
+                                    <th>World Name (EN / AR)</th>
+                                    <th>Version</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="worlds-table-body">
+                                <!-- Loaded dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- MC VERSIONS TAB -->
+            <div id="versions-tab" class="dashboard-tab">
+                <div class="page-header">
+                    <div class="page-title">
+                        <h1>Minecraft Versions</h1>
+                        <p>Manage official and patch versions for players to download.</p>
+                    </div>
+                    <button class="btn" style="width: auto;" onclick="openVersionModal()">Add New Version</button>
+                </div>
+
+                <div class="card">
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Pos</th>
+                                    <th>Type</th>
+                                    <th>Name (EN / AR)</th>
+                                    <th>Link</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="versions-table-body">
+                                <!-- Loaded dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- E. MODS / ITEMS TAB -->
+            <div id="mods-tab" class="dashboard-tab">
+                <div class="page-header">
+                    <div class="page-title">
+                        <h1>Mods & Marketplace Items</h1>
+                        <p>Create, update, or remove all downloadable assets, skins, maps, or templates.</p>
+                    </div>
+                    <button class="btn" style="width: auto;" onclick="openItemModal()">Upload Mod</button>
+                </div>
+
+                <div class="tab-controls">
+                    <div class="search-box-panel">
+                        <input type="text" id="mods-search-input" class="form-input" placeholder="Search by name..." style="width: 250px;">
+                        <select id="mods-filter-tag" class="form-input" style="width: 150px;">
+                            <option value="">All Tags</option>
+                            <option value="addons">Add-ons</option>
+                            <option value="maps">Maps</option>
+                            <option value="textures">Textures</option>
+                            <option value="skins">Skins</option>
+                        </select>
+                        <select id="mods-filter-section" class="form-input" style="width: 180px;">
+                            <option value="">All Sections</option>
+                            <!-- Sections will be filled dynamically -->
+                        </select>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Thumbnail</th>
+                                    <th>Name (EN / AR)</th>
+                                    <th>Tag</th>
+                                    <th>Section</th>
+                                    <th>Version</th>
+                                    <th>File Size</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="items-table-body">
+                                <!-- Loaded dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- F. SETTINGS / CLEANUP TAB -->
+            <div id="settings-tab" class="dashboard-tab">
+                <div class="page-header">
+                    <div class="page-title">
+                        <h1>System Maintenance</h1>
+                        <p>Tools to clean up dummy data and manage global database state.</p>
+                    </div>
+                </div>
+
+                <div class="card" style="border-color: #ffcc00; background: rgba(255, 204, 0, 0.05); border: 1px solid #ffcc00;">
+                    <h3 style="color: #ffcc00; margin-bottom: 15px;">🧹 Purge Dummy Data</h3>
+                    <p style="margin-bottom: 20px; font-size: 14px; color: #aaa;">This will permanently delete all the "Dummy/Mock" items (like Enderman Morph, Notch Skin, etc.) from the server. Your own added items will NOT be affected.</p>
+                    
+                    <div style="display: flex; gap: 15px;">
+                        <button class="btn" style="width: auto; background: #e67e22;" onclick="purgeDummyData()">Run Database Purge</button>
+                        <button class="btn" style="width: auto; background: #c0392b;" onclick="resetLocalStorage()">Clear My Local Cache</button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- 3. Modals Dialogs -->
+    
+    <!-- Slider Dialog Modal -->
+    <div id="slider-modal" class="modal">
+        <div class="modal-content" style="max-width: 750px;">
+            <div class="modal-header">
+                <h3 id="slider-modal-title">New Slide Properties</h3>
+                <button class="close-modal" onclick="closeModal('slider-modal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="slider-form">
+                    <input type="hidden" id="slider-item-id">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Name (English)</label>
+                            <input type="text" id="slider-name-en" class="form-input" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Name (Arabic)</label>
+                            <input type="text" id="slider-name-ar" class="form-input" required>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Minecraft Version</label>
+                            <input type="text" id="slider-version" class="form-input" placeholder="e.g. 1.21" required>
+                        </div>
+                        <div class="form-group">
+                            <label>File Size</label>
+                            <input type="text" id="slider-file-size" class="form-input" placeholder="e.g. 3.4 MB" required>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Category Tag</label>
+                            <select id="slider-tag" class="form-input">
+                                <option value="addons">Add-ons</option>
+                                <option value="maps">Maps</option>
+                                <option value="textures">Textures</option>
+                                <option value="skins">Skins</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Featured Video URL (Slide background - optional)</label>
+                            <input type="text" id="slider-video-url" class="form-input" placeholder="video/example.mp4">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Main Image URL</label>
+                        <input type="url" id="slider-img-url" class="form-input" placeholder="https://..." required>
+                    </div>
+                    <div class="form-group">
+                        <label>Download Link</label>
+                        <input type="text" id="slider-download-url" class="form-input" placeholder="https://..." required>
+                    </div>
+                    <div class="form-group">
+                        <label>Description (English)</label>
+                        <textarea id="slider-desc-en" class="form-input" style="height: 80px; resize: vertical;"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Description (Arabic)</label>
+                        <textarea id="slider-desc-ar" class="form-input" style="height: 80px; resize: vertical;"></textarea>
+                    </div>
+                    <!-- Gallery Inputs -->
+                    <div class="form-group">
+                        <label>Gallery Images (CDN Links)</label>
+                        <div class="dynamic-list-container">
+                            <div id="slider-gallery-images-rows"></div>
+                            <button type="button" class="btn-add-item" onclick="addSliderGalleryImageRow('')">+ Add Image URL</button>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Gallery YouTube Videos (Watch Links)</label>
+                        <div class="dynamic-list-container">
+                            <div id="slider-gallery-videos-rows"></div>
+                            <button type="button" class="btn-add-item" onclick="addSliderGalleryVideoRow('')">+ Add Video URL</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-cancel" style="width: auto;" onclick="closeModal('slider-modal')">Cancel</button>
+                <button class="btn" style="width: auto;" onclick="saveSliderItem()">Save Changes</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Side Card Dialog Modal -->
+    <div id="side-card-modal" class="modal">
+        <div class="modal-content" style="max-width: 750px;">
+            <div class="modal-header">
+                <h3 id="side-card-modal-title">Edit Hero Side Card</h3>
+                <button class="close-modal" onclick="closeModal('side-card-modal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="side-card-form">
+                    <input type="hidden" id="side-card-id">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Card Title (English)</label>
+                            <input type="text" id="side-card-name-en" class="form-input" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Card Title (Arabic)</label>
+                            <input type="text" id="side-card-name-ar" class="form-input" required>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Minecraft Version</label>
+                            <input type="text" id="side-card-version" class="form-input" placeholder="e.g. 1.21" required>
+                        </div>
+                        <div class="form-group">
+                            <label>File Size</label>
+                            <input type="text" id="side-card-file-size" class="form-input" placeholder="e.g. 3.4 MB" required>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Tag Category</label>
+                            <select id="side-card-tag" class="form-input">
+                                <option value="addons">Add-ons</option>
+                                <option value="maps">Maps</option>
+                                <option value="textures">Textures</option>
+                                <option value="skins">Skins</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Card Image URL</label>
+                            <input type="url" id="side-card-img-url" class="form-input" placeholder="https://..." required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Download Link</label>
+                        <input type="text" id="side-card-download-url" class="form-input" placeholder="https://..." required>
+                    </div>
+                    <div class="form-group">
+                        <label>Description (English)</label>
+                        <textarea id="side-card-desc-en" class="form-input" style="height: 80px; resize: vertical;"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Description (Arabic)</label>
+                        <textarea id="side-card-desc-ar" class="form-input" style="height: 80px; resize: vertical;"></textarea>
+                    </div>
+                    <!-- Gallery Inputs -->
+                    <div class="form-group">
+                        <label>Gallery Images (CDN Links)</label>
+                        <div class="dynamic-list-container">
+                            <div id="side-card-gallery-images-rows"></div>
+                            <button type="button" class="btn-add-item" onclick="addSideCardGalleryImageRow('')">+ Add Image URL</button>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Gallery YouTube Videos (Watch Links)</label>
+                        <div class="dynamic-list-container">
+                            <div id="side-card-gallery-videos-rows"></div>
+                            <button type="button" class="btn-add-item" onclick="addSideCardGalleryVideoRow('')">+ Add Video URL</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-cancel" style="width: auto;" onclick="closeModal('side-card-modal')">Cancel</button>
+                <button class="btn" style="width: auto;" onclick="saveSideCard()">Save Changes</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Section Dialog Modal -->
+    <div id="section-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="section-modal-title">Homepage Section Setup</h3>
+                <button class="close-modal" onclick="closeModal('section-modal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="section-form">
+                    <div class="form-group">
+                        <label>Unique ID / Key (lowercase, no spaces)</label>
+                        <input type="text" id="section-id" class="form-input" placeholder="my_new_section" required>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Title (English)</label>
+                            <input type="text" id="section-title-en" class="form-input" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Title (Arabic)</label>
+                            <input type="text" id="section-title-ar" class="form-input" required>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Subtitle (English)</label>
+                            <input type="text" id="section-subtitle-en" class="form-input" placeholder="Best curated mods...">
+                        </div>
+                        <div class="form-group">
+                            <label>Subtitle (Arabic)</label>
+                            <input type="text" id="section-subtitle-ar" class="form-input" placeholder="أفضل المودات المختارة...">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Icon SVG Path (Optional)</label>
+                        <textarea id="section-icon-svg" class="form-input" style="height: 60px; font-family: monospace; font-size: 12px;" placeholder="<path d='...' />"></textarea>
+                        <small style="color: var(--text-muted); font-size: 10px;">Paste only the SVG inner content (e.g. &lt;path&gt; or &lt;circle&gt;)</small>
+                    </div>
+                    <div class="form-group">
+                        <label>Theme Style (Accent Glow)</label>
+                        <select id="section-theme" class="form-input">
+                            <option value="theme-red">Red Glow</option>
+                            <option value="theme-orange">Orange Glow</option>
+                            <option value="theme-blue">Blue Glow</option>
+                            <option value="theme-purple">Purple Glow</option>
+                        </select>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-cancel" style="width: auto;" onclick="closeModal('section-modal')">Cancel</button>
+                <button class="btn" style="width: auto;" onclick="saveSection()">Save Changes</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Minecraft Version Dialog Modal -->
+    <div id="version-modal" class="modal">
+        <div class="modal-content" style="max-width: 600px;">
+            <div class="modal-header">
+                <h3 id="version-modal-title">Minecraft Version Details</h3>
+                <button class="close-modal" onclick="closeModal('version-modal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="version-form">
+                    <input type="hidden" id="version-id">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Display Name (English)</label>
+                            <input type="text" id="version-name-en" class="form-input" placeholder="e.g. Minecraft Version 1.21.140" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Display Name (Arabic)</label>
+                            <input type="text" id="version-name-ar" class="form-input" placeholder="مثلاً: ماين كرافت إصدار 1.21.140" required>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Version Type</label>
+                            <select id="version-type" class="form-input">
+                                <option value="official">Official Version</option>
+                                <option value="patch">Patch Version</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Download Link</label>
+                            <input type="text" id="version-link" class="form-input" placeholder="https://..." required>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-cancel" style="width: auto;" onclick="closeModal('version-modal')">Cancel</button>
+                <button class="btn" style="width: auto;" onclick="saveMinecraftVersion()">Save Version</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mod Item Dialog Modal (Full Metadata) -->
+    <div id="item-modal" class="modal">
+        <div class="modal-content" style="max-width: 750px;">
+            <div class="modal-header">
+                <h3 id="item-modal-title">Item Catalog Properties</h3>
+                <button class="close-modal" onclick="closeModal('item-modal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="item-form">
+                    <input type="hidden" id="item-id">
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Name (English)</label>
+                            <input type="text" id="item-name-en" class="form-input" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Name (Arabic)</label>
+                            <input type="text" id="item-name-ar" class="form-input" required>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Minecraft Version</label>
+                            <input type="text" id="item-version" class="form-input" placeholder="e.g. 1.21.10" required>
+                        </div>
+                        <div class="form-group">
+                            <label>File Size</label>
+                            <input type="text" id="item-file-size" class="form-input" placeholder="e.g. 4.2 MB" required>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Tag Category</label>
+                            <select id="item-tag" class="form-input">
+                                <option value="addons">Add-ons</option>
+                                <option value="maps">Maps</option>
+                                <option value="textures">Textures</option>
+                                <option value="skins">Skins</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Homepage Section Category</label>
+                            <select id="item-section-id" class="form-input">
+                                <option value="">None (Search Pool only)</option>
+                                <!-- Sections loaded dynamically -->
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Thumbnail / Main Image URL</label>
+                        <input type="url" id="item-img-url" class="form-input" placeholder="https://..." required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Download Link</label>
+                        <input type="text" id="item-download-url" class="form-input" placeholder="https://..." required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Description (English)</label>
+                        <textarea id="item-desc-en" class="form-input" style="height: 80px; resize: vertical;"></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Description (Arabic)</label>
+                        <textarea id="item-desc-ar" class="form-input" style="height: 80px; resize: vertical;"></textarea>
+                    </div>
+
+                    <!-- Gallery Inputs -->
+                    <div class="form-group">
+                        <label>Gallery Images (CDN Links)</label>
+                        <div class="dynamic-list-container">
+                            <div id="gallery-images-rows"></div>
+                            <button type="button" class="btn-add-item" onclick="addGalleryImageRow('')">+ Add Image URL</button>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Gallery YouTube Videos (Watch Links)</label>
+                        <div class="dynamic-list-container">
+                            <div id="gallery-videos-rows"></div>
+                            <button type="button" class="btn-add-item" onclick="addGalleryVideoRow('')">+ Add Video URL</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-cancel" style="width: auto;" onclick="closeModal('item-modal')">Cancel</button>
+                <button class="btn" style="width: auto;" onclick="saveItem()">Save Changes</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast message overlay -->
+    <div id="toast">Saved Successfully!</div>
+
+    <!-- Script Imports -->
+    <script src="supabase-client.js"></script>
+    <script>
+        const PASSCODE = "55225";
+
+        document.getElementById('login-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const val = document.getElementById('passcode-input').value;
+            if (val === PASSCODE) {
+                localStorage.setItem('zxko_admin', 'true');
+                showApp();
+            } else {
+                alert('Wrong passcode!');
+                document.getElementById('passcode-input').value = '';
+            }
+        });
+
+        function showApp() {
+            document.getElementById('login-screen').style.opacity = '0';
+            setTimeout(() => {
+                document.getElementById('login-screen').style.display = 'none';
+                document.getElementById('admin-app').style.display = 'flex';
+                initDashboard();
+            }, 500);
+        }
+
+        function logout() {
+            localStorage.removeItem('zxko_admin');
+            window.location.reload();
+        }
+
+        if (localStorage.getItem('zxko_admin') === 'true') {
+            document.getElementById('login-screen').style.display = 'none';
+            document.getElementById('admin-app').style.display = 'flex';
+            window.onload = initDashboard;
+        }
+
+        let globalSlider = [];
+        let globalSideCards = [];
+        let globalSections = [];
+        let globalItems = [];
+        let globalVersions = [];
+
+        const menuLinks = document.querySelectorAll('.menu-link');
+        const tabs = document.querySelectorAll('.dashboard-tab');
+
+        menuLinks.forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                menuLinks.forEach(l => l.classList.remove('active'));
+                tabs.forEach(t => t.classList.remove('active'));
+
+                link.classList.add('active');
+                const targetTab = link.getAttribute('data-tab');
+                document.getElementById(targetTab).classList.add('active');
+            });
+        });
+
+        function showToast(text, type = 'success') {
+            const toast = document.getElementById('toast');
+            toast.innerText = text;
+            toast.className = `success ${type}`;
+            toast.style.display = 'flex';
+            setTimeout(() => {
+                toast.style.display = 'none';
+            }, 3000);
+        }
+
+        function closeModal(id) {
+            document.getElementById(id).style.display = 'none';
+        }
+
+        async function initDashboard() {
+            try {
+                globalSlider = await SupabaseClient.getSliderItems();
+                globalSideCards = await SupabaseClient.getSideCards();
+                globalSections = await SupabaseClient.getSections();
+                globalItems = await SupabaseClient.getItems();
+                globalVersions = await SupabaseClient.getMinecraftVersions();
+
+                renderSliderTable();
+                renderSideCardsTable();
+                renderSkinsTable();
+                renderWorldsTable();
+                renderVersionsTable();
+                renderSectionsTable();
+                renderItemsTable();
+                populateDropdowns();
+            } catch (e) {
+                console.error("Setup init dashboard failed", e);
+                showToast("Connection to Supabase database failed", "error");
+            }
+        }
+
+        function populateDropdowns() {
+            const options = globalSections.map(s => `<option value="${s.id}">${s.title_en} (${s.title_ar})</option>`).join('');
+            document.getElementById('mods-filter-section').innerHTML = '<option value="">All Sections</option>' + options;
+            document.getElementById('item-section-id').innerHTML = '<option value="">None (Search Pool only)</option>' + options;
+        }
+
+        // A. SLIDER MANAGEMENT
+        function renderSliderTable() {
+            const tbody = document.getElementById('slider-table-body');
+            tbody.innerHTML = globalSlider.map((item, index) => `
+                <tr>
+                    <td><strong>${index + 1}</strong></td>
+                    <td><img src="${item.img_url}" class="table-thumb" onerror="this.src='images/dark_fantasy.jpeg'"></td>
+                    <td>
+                        <div><strong>${item.name_en}</strong></div>
+                        <div class="text-muted" style="font-size:12px;">${item.name_ar}</div>
+                    </td>
+                    <td><span class="tag-badge ${item.tag}">${item.tag}</span></td>
+                    <td style="font-size:12px; max-width:200px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">
+                        ${item.slider_video_url ? '🎬 Video + Image' : '🖼️ Image Only'}
+                    </td>
+                    <td>
+                        <div class="order-actions">
+                            <button class="btn-order" onclick="moveSlider(${index}, -1)" ${index === 0 ? 'disabled' : ''}>▲</button>
+                            <button class="btn-order" onclick="moveSlider(${index}, 1)" ${index === globalSlider.length - 1 ? 'disabled' : ''}>▼</button>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="action-btns">
+                            <button class="btn-sm btn-edit" onclick="editSliderItem('${item.id}')">Edit</button>
+                            <button class="btn-sm btn-delete" onclick="deleteSliderItem('${item.id}')">Delete</button>
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        // Dynamic lists helper for slider modal
+        function addSliderGalleryImageRow(val = '') {
+            const container = document.getElementById('slider-gallery-images-rows');
+            const div = document.createElement('div');
+            div.className = 'dynamic-item-row';
+            div.innerHTML = `
+                <input type="url" class="form-input slider-gallery-image-url" placeholder="https://..." value="${val}" required>
+                <button type="button" class="btn-sm btn-delete" onclick="this.parentElement.remove()" style="padding:12px;">Remove</button>
+            `;
+            container.appendChild(div);
+        }
+
+        function addSliderGalleryVideoRow(val = '') {
+            const container = document.getElementById('slider-gallery-videos-rows');
+            const div = document.createElement('div');
+            div.className = 'dynamic-item-row';
+            div.innerHTML = `
+                <input type="text" class="form-input slider-gallery-video-url" placeholder="https://..." value="${val}" required>
+                <button type="button" class="btn-sm btn-delete" onclick="this.parentElement.remove()" style="padding:12px;">Remove</button>
+            `;
+            container.appendChild(div);
+        }
+
+        function openSliderModal() {
+            document.getElementById('slider-form').reset();
+            document.getElementById('slider-item-id').value = '';
+            document.getElementById('slider-gallery-images-rows').innerHTML = '';
+            document.getElementById('slider-gallery-videos-rows').innerHTML = '';
+            document.getElementById('slider-modal-title').innerText = 'Create New Featured Slide';
+            document.getElementById('slider-modal').style.display = 'flex';
+        }
+
+        function editSliderItem(id) {
+            const item = globalSlider.find(s => s.id === id);
+            if (!item) return;
+            document.getElementById('slider-item-id').value = item.id;
+            document.getElementById('slider-name-en').value = item.name_en;
+            document.getElementById('slider-name-ar').value = item.name_ar;
+            document.getElementById('slider-version').value = item.version || '1.21';
+            document.getElementById('slider-file-size').value = item.file_size || '0 KB';
+            document.getElementById('slider-tag').value = item.tag;
+            document.getElementById('slider-img-url').value = item.img_url;
+            document.getElementById('slider-video-url').value = item.slider_video_url || '';
+            document.getElementById('slider-download-url').value = item.download_url || '#';
+            document.getElementById('slider-desc-en').value = item.description_en || '';
+            document.getElementById('slider-desc-ar').value = item.description_ar || '';
+
+            // Render galleries
+            const imagesRows = document.getElementById('slider-gallery-images-rows');
+            imagesRows.innerHTML = '';
+            const images = item.gallery_images || [];
+            images.forEach(img => addSliderGalleryImageRow(img));
+
+            const videosRows = document.getElementById('slider-gallery-videos-rows');
+            videosRows.innerHTML = '';
+            const videos = item.gallery_videos || [];
+            videos.forEach(vid => addSliderGalleryVideoRow(vid));
+
+            document.getElementById('slider-modal-title').innerText = 'Modify Slide Settings';
+            document.getElementById('slider-modal').style.display = 'flex';
+        }
+
+        async function saveSliderItem() {
+            const id = document.getElementById('slider-item-id').value;
+            const gallery_images = Array.from(document.querySelectorAll('.slider-gallery-image-url')).map(input => input.value).filter(val => val.trim() !== '');
+            const gallery_videos = Array.from(document.querySelectorAll('.slider-gallery-video-url')).map(input => input.value).filter(val => val.trim() !== '');
+
+            const item = {
+                name_en: document.getElementById('slider-name-en').value,
+                name_ar: document.getElementById('slider-name-ar').value,
+                tag: document.getElementById('slider-tag').value,
+                img_url: document.getElementById('slider-img-url').value,
+                slider_video_url: document.getElementById('slider-video-url').value,
+                download_url: document.getElementById('slider-download-url').value,
+                version: document.getElementById('slider-version').value,
+                file_size: document.getElementById('slider-file-size').value,
+                description_en: document.getElementById('slider-desc-en').value,
+                description_ar: document.getElementById('slider-desc-ar').value,
+                gallery_images,
+                gallery_videos,
+                position: id && !id.startsWith("local_") ? globalSlider.find(s => s.id === id).position : 0,
+                slider_position: id && !id.startsWith("local_") ? globalSlider.find(s => s.id === id).slider_position : globalSlider.length + 1
+            };
+            if (id) item.id = id;
+
+            try {
+                await SupabaseClient.saveSliderItem(item);
+                closeModal('slider-modal');
+                showToast("Carousel slide saved!");
+                initDashboard();
+            } catch (e) {
+                console.error(e);
+                showToast("Failed to save slide", "error");
+            }
+        }
+
+        async function deleteSliderItem(id) {
+            if (!confirm("Are you sure you want to remove this slide?")) return;
+            try {
+                await SupabaseClient.deleteSliderItem(id);
+                showToast("Carousel slide removed");
+                initDashboard();
+            } catch (e) {
+                console.error(e);
+                showToast("Failed to delete slide", "error");
+            }
+        }
+
+        async function moveSlider(index, direction) {
+            const newIndex = index + direction;
+            if (newIndex < 0 || newIndex >= globalSlider.length) return;
+            
+            const temp = globalSlider[index];
+            globalSlider[index] = globalSlider[newIndex];
+            globalSlider[newIndex] = temp;
+            
+            try {
+                await SupabaseClient.reorderSliderItems(globalSlider);
+                renderSliderTable();
+                showToast("Carousel position updated");
+            } catch(e) {
+                showToast("Failed to save order", "error");
+            }
+        }
+
+        // B. SIDE CARDS MANAGEMENT
+        function renderSideCardsTable() {
+            const tbody = document.getElementById('side-cards-table-body');
+            tbody.innerHTML = globalSideCards.map((card, index) => `
+                <tr>
+                    <td><strong>${index + 1}</strong></td>
+                    <td><img src="${card.img_url}" class="table-thumb" onerror="this.src='images/dark_fantasy.jpeg'"></td>
+                    <td>
+                        <div><strong>${card.name_en}</strong></div>
+                        <div class="text-muted" style="font-size:12px;">${card.name_ar}</div>
+                    </td>
+                    <td><span class="tag-badge ${card.tag}">${card.tag}</span></td>
+                    <td>
+                        <div class="order-actions">
+                            <button class="btn-order" onclick="moveSideCard(${index}, -1)" ${index === 0 ? 'disabled' : ''}>▲</button>
+                            <button class="btn-order" onclick="moveSideCard(${index}, 1)" ${index === globalSideCards.length - 1 ? 'disabled' : ''}>▼</button>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="action-btns">
+                            <button class="btn-sm btn-edit" onclick="editSideCard('${card.id}')">Edit</button>
+                            <button class="btn-sm btn-delete" onclick="deleteSideCard('${card.id}')">Delete</button>
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function addSideCardGalleryImageRow(val = '') {
+            const container = document.getElementById('side-card-gallery-images-rows');
+            const div = document.createElement('div');
+            div.className = 'dynamic-item-row';
+            div.innerHTML = `
+                <input type="url" class="form-input side-card-gallery-image-url" placeholder="https://..." value="${val}" required>
+                <button type="button" class="btn-sm btn-delete" onclick="this.parentElement.remove()" style="padding:12px;">Remove</button>
+            `;
+            container.appendChild(div);
+        }
+
+        function addSideCardGalleryVideoRow(val = '') {
+            const container = document.getElementById('side-card-gallery-videos-rows');
+            const div = document.createElement('div');
+            div.className = 'dynamic-item-row';
+            div.innerHTML = `
+                <input type="text" class="form-input side-card-gallery-video-url" placeholder="https://..." value="${val}" required>
+                <button type="button" class="btn-sm btn-delete" onclick="this.parentElement.remove()" style="padding:12px;">Remove</button>
+            `;
+            container.appendChild(div);
+        }
+
+        function openSideCardModal() {
+            document.getElementById('side-card-form').reset();
+            document.getElementById('side-card-id').value = '';
+            document.getElementById('side-card-gallery-images-rows').innerHTML = '';
+            document.getElementById('side-card-gallery-videos-rows').innerHTML = '';
+            document.getElementById('side-card-modal-title').innerText = 'Create New Side Card';
+            document.getElementById('side-card-modal').style.display = 'flex';
+        }
+
+        function editSideCard(id) {
+            const card = globalSideCards.find(c => c.id === id);
+            if (!card) return;
+            document.getElementById('side-card-id').value = card.id;
+            document.getElementById('side-card-name-en').value = card.name_en;
+            document.getElementById('side-card-name-ar').value = card.name_ar;
+            document.getElementById('side-card-version').value = card.version || '1.21';
+            document.getElementById('side-card-file-size').value = card.file_size || '0 KB';
+            document.getElementById('side-card-tag').value = card.tag;
+            document.getElementById('side-card-img-url').value = card.img_url;
+            document.getElementById('side-card-download-url').value = card.download_url || '#';
+            document.getElementById('side-card-desc-en').value = card.description_en || '';
+            document.getElementById('side-card-desc-ar').value = card.description_ar || '';
+
+            // Gallery fields
+            const imagesRows = document.getElementById('side-card-gallery-images-rows');
+            imagesRows.innerHTML = '';
+            const images = card.gallery_images || [];
+            images.forEach(img => addSideCardGalleryImageRow(img));
+
+            const videosRows = document.getElementById('side-card-gallery-videos-rows');
+            videosRows.innerHTML = '';
+            const videos = card.gallery_videos || [];
+            videos.forEach(vid => addSideCardGalleryVideoRow(vid));
+
+            document.getElementById('side-card-modal-title').innerText = 'Modify Hero Side Card';
+            document.getElementById('side-card-modal').style.display = 'flex';
+        }
+
+        async function saveSideCard() {
+            const id = document.getElementById('side-card-id').value;
+            const gallery_images = Array.from(document.querySelectorAll('.side-card-gallery-image-url')).map(input => input.value).filter(val => val.trim() !== '');
+            const gallery_videos = Array.from(document.querySelectorAll('.side-card-gallery-video-url')).map(input => input.value).filter(val => val.trim() !== '');
+
+            const card = {
+                name_en: document.getElementById('side-card-name-en').value,
+                name_ar: document.getElementById('side-card-name-ar').value,
+                tag: document.getElementById('side-card-tag').value,
+                img_url: document.getElementById('side-card-img-url').value,
+                download_url: document.getElementById('side-card-download-url').value,
+                version: document.getElementById('side-card-version').value,
+                file_size: document.getElementById('side-card-file-size').value,
+                description_en: document.getElementById('side-card-desc-en').value,
+                description_ar: document.getElementById('side-card-desc-ar').value,
+                gallery_images,
+                gallery_videos,
+                position: 0,
+                slider_position: 0,
+                side_card_position: id && !id.startsWith("local_") ? globalSideCards.find(c => c.id === id).side_card_position : globalSideCards.length + 1
+            };
+            if (id) card.id = id;
+
+            try {
+                await SupabaseClient.saveSideCard(card);
+                closeModal('side-card-modal');
+                showToast("Hero card updated!");
+                initDashboard();
+            } catch (e) {
+                console.error(e);
+                showToast("Failed to save card", "error");
+            }
+        }
+
+        async function deleteSideCard(id) {
+            if (!confirm("Are you sure you want to delete this side card?")) return;
+            try {
+                await SupabaseClient.deleteSideCard(id);
+                showToast("Side card removed");
+                initDashboard();
+            } catch(e) {
+                console.error(e);
+                showToast("Failed to delete card", "error");
+            }
+        }
+
+        async function moveSideCard(index, direction) {
+            const newIndex = index + direction;
+            if (newIndex < 0 || newIndex >= globalSideCards.length) return;
+            
+            const temp = globalSideCards[index];
+            globalSideCards[index] = globalSideCards[newIndex];
+            globalSideCards[newIndex] = temp;
+            
+            // Reorder positions using general wrapper
+            try {
+                // Quick custom patch endpoint reorder
+                for (let i = 0; i < globalSideCards.length; i++) {
+                    globalSideCards[i].side_card_position = i + 1;
+                    await SupabaseClient.saveSideCard(globalSideCards[i]);
+                }
+                renderSideCardsTable();
+                showToast("Side cards layout saved");
+            } catch(e) {
+                showToast("Failed to save positions", "error");
+            }
+        }
+
+        // C. SECTIONS MANAGEMENT
+        function renderSectionsTable() {
+            const tbody = document.getElementById('sections-table-body');
+            tbody.innerHTML = globalSections.map((sec, index) => {
+                const itemCount = globalItems.filter(i => i.section_id === sec.id && !i.is_slider && !i.is_side_card).length;
+                return `
+                    <tr>
+                        <td><strong>${index + 1}</strong></td>
+                        <td><code>${sec.id}</code></td>
+                        <td>
+                            <div><strong>${sec.title_en}</strong></div>
+                            <div class="text-muted" style="font-size:12px;">${sec.title_ar}</div>
+                        </td>
+                        <td><span class="tag-badge" style="border: 1px solid red; background: transparent; color: red;">${sec.theme.replace('theme-', '').toUpperCase()}</span></td>
+                        <td>
+                            <div style="display: flex; align-items: center; gap: 10px;">
+                                <span class="tag-badge" style="background: #222; color: #fff;">${itemCount} Items</span>
+                                <button class="btn-sm" style="background: var(--accent-color); color: #fff; padding: 4px 8px; font-size: 10px;" onclick="selectSectionAndManage('${sec.id}')">Manage</button>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="order-actions">
+                                <button class="btn-order" onclick="moveSection(${index}, -1)" ${index === 0 ? 'disabled' : ''}>▲</button>
+                                <button class="btn-order" onclick="moveSection(${index}, 1)" ${index === globalSections.length - 1 ? 'disabled' : ''}>▼</button>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="action-btns">
+                                <button class="btn-sm btn-edit" onclick="editSection('${sec.id}')">Edit</button>
+                                <button class="btn-sm btn-delete" onclick="deleteSection('${sec.id}')">Delete</button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+
+            // Update section selector dropdown
+            const selector = document.getElementById('section-selector');
+            const currentVal = selector.value;
+            selector.innerHTML = '<option value="">-- Select Section --</option>' + 
+                globalSections.map(s => `<option value="${s.id}" ${s.id === currentVal ? 'selected' : ''}>${s.title_en}</option>`).join('');
+            
+            if (currentVal) renderSectionItemsTable();
+        }
+
+        function selectSectionAndManage(sectionId) {
+            document.getElementById('section-selector').value = sectionId;
+            renderSectionItemsTable();
+            document.getElementById('section-items-manager').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function renderSectionItemsTable() {
+            const sectionId = document.getElementById('section-selector').value;
+            const tbody = document.getElementById('section-items-table-body');
+            
+            if (!sectionId) {
+                tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; padding: 40px; color: var(--text-muted);">Please select a section above to manage its items.</td></tr>';
+                return;
+            }
+
+            const sectionItems = globalItems.filter(i => i.section_id === sectionId && !i.is_slider && !i.is_side_card).sort((a,b) => a.position - b.position);
+            
+            if (sectionItems.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; padding: 40px; color: var(--text-muted);">No items found in this section. Click "+ Add New Slot" to create one.</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = sectionItems.map((item, index) => `
+                <tr>
+                    <td><strong>${index + 1}</strong></td>
+                    <td><img src="${item.img_url}" class="table-thumb" onerror="this.src='images/dark_fantasy.jpeg'"></td>
+                    <td>
+                        <div><strong>${item.name_en}</strong></div>
+                        <div class="text-muted" style="font-size:12px;">${item.name_ar}</div>
+                    </td>
+                    <td><span class="tag-badge ${item.tag}">${item.tag}</span></td>
+                    <td>${item.version}</td>
+                    <td>
+                        <div class="order-actions">
+                            <button class="btn-order" onclick="moveSectionItem('${item.id}', -1)" ${index === 0 ? 'disabled' : ''}>▲</button>
+                            <button class="btn-order" onclick="moveSectionItem('${item.id}', 1)" ${index === sectionItems.length - 1 ? 'disabled' : ''}>▼</button>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="action-btns">
+                            <button class="btn-sm btn-edit" onclick="editItem('${item.id}')">Edit</button>
+                            <button class="btn-sm btn-delete" onclick="deleteItem('${item.id}')">Delete</button>
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function addNewSlotToCurrentSection() {
+            const sectionId = document.getElementById('section-selector').value;
+            if (!sectionId) {
+                showToast("Please select a section first", "error");
+                return;
+            }
+            openItemModal();
+            document.getElementById('item-section-id').value = sectionId;
+            document.getElementById('item-modal-title').innerText = 'Add New Slot to ' + globalSections.find(s => s.id === sectionId).title_en;
+        }
+
+        async function moveSectionItem(itemId, direction) {
+            const sectionId = document.getElementById('section-selector').value;
+            const sectionItems = globalItems.filter(i => i.section_id === sectionId && !i.is_slider && !i.is_side_card).sort((a,b) => a.position - b.position);
+            const index = sectionItems.findIndex(i => i.id === itemId);
+            const newIndex = index + direction;
+            
+            if (newIndex < 0 || newIndex >= sectionItems.length) return;
+            
+            const temp = sectionItems[index];
+            sectionItems[index] = sectionItems[newIndex];
+            sectionItems[newIndex] = temp;
+
+            try {
+                for (let i = 0; i < sectionItems.length; i++) {
+                    sectionItems[i].position = i + 1;
+                    await SupabaseClient.saveItem(sectionItems[i]);
+                }
+                showToast("Item order updated");
+                initDashboard();
+            } catch(e) {
+                showToast("Failed to save order", "error");
+            }
+        }
+
+        function openItemModalWithSection(sectionId) {
+            openItemModal();
+            document.getElementById('item-section-id').value = sectionId;
+        }
+
+        function openSectionModal() {
+            document.getElementById('section-form').reset();
+            document.getElementById('section-id').disabled = false;
+            document.getElementById('section-modal-title').innerText = 'Create Layout Section';
+            document.getElementById('section-modal').style.display = 'flex';
+        }
+
+        function editSection(id) {
+            const sec = globalSections.find(s => s.id === id);
+            if (!sec) return;
+            document.getElementById('section-id').value = sec.id;
+            document.getElementById('section-id').disabled = true;
+            document.getElementById('section-title-en').value = sec.title_en;
+            document.getElementById('section-title-ar').value = sec.title_ar;
+            document.getElementById('section-subtitle-en').value = sec.subtitle_en || '';
+            document.getElementById('section-subtitle-ar').value = sec.subtitle_ar || '';
+            document.getElementById('section-icon-svg').value = sec.icon_svg || '';
+            document.getElementById('section-theme').value = sec.theme;
+            document.getElementById('section-modal-title').innerText = 'Modify Layout Section';
+            document.getElementById('section-modal').style.display = 'flex';
+        }
+
+        async function saveSection() {
+            const idInput = document.getElementById('section-id');
+            const sec = {
+                id: idInput.value.toLowerCase().replace(/[^a-z0-9_]/g, ''),
+                title_en: document.getElementById('section-title-en').value,
+                title_ar: document.getElementById('section-title-ar').value,
+                subtitle_en: document.getElementById('section-subtitle-en').value,
+                subtitle_ar: document.getElementById('section-subtitle-ar').value,
+                icon_svg: document.getElementById('section-icon-svg').value,
+                theme: document.getElementById('section-theme').value,
+                position: idInput.disabled ? globalSections.find(s => s.id === idInput.value).position : globalSections.length + 1
+            };
+
+            try {
+                await SupabaseClient.saveSection(sec);
+                closeModal('section-modal');
+                showToast("Homepage layout section saved!");
+                initDashboard();
+            } catch (e) {
+                console.error(e);
+                showToast("Failed to save section", "error");
+            }
+        }
+
+        async function deleteSection(id) {
+            if (!confirm("Are you sure you want to delete this section? Items matching this section will remain but won't be grouped under this row.")) return;
+            try {
+                await SupabaseClient.deleteSection(id);
+                showToast("Layout section removed");
+                initDashboard();
+            } catch (e) {
+                console.error(e);
+                showToast("Failed to delete section", "error");
+            }
+        }
+
+        async function moveSection(index, direction) {
+            const newIndex = index + direction;
+            if (newIndex < 0 || newIndex >= globalSections.length) return;
+            
+            const temp = globalSections[index];
+            globalSections[index] = globalSections[newIndex];
+            globalSections[newIndex] = temp;
+            
+            try {
+                await SupabaseClient.reorderSections(globalSections);
+                renderSectionsTable();
+                showToast("Sections order saved");
+            } catch(e) {
+                showToast("Failed to save sections order", "error");
+            }
+        }
+
+        // D. SKINS MANAGEMENT
+        function renderSkinsTable() {
+            const tbody = document.getElementById('skins-table-body');
+            const skins = globalItems.filter(item => item.tag === 'skins');
+            
+            tbody.innerHTML = skins.map((skin, index) => `
+                <tr>
+                    <td><strong>${index + 1}</strong></td>
+                    <td><img src="${skin.img_url}" class="table-thumb" onerror="this.src='https://mc-heads.net/body/Steve/180'"></td>
+                    <td>
+                        <div><strong>${skin.name_en}</strong></div>
+                        <div class="text-muted" style="font-size:12px;">${skin.name_ar}</div>
+                    </td>
+                    <td>${skin.file_size || 'N/A'}</td>
+                    <td>
+                        <div class="action-btns">
+                            <button class="btn-sm btn-edit" onclick="editItem('${skin.id}')">Edit</button>
+                            <button class="btn-sm btn-delete" onclick="deleteItem('${skin.id}')">Delete</button>
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function openSkinModal() {
+            openItemModal();
+            document.getElementById('item-tag').value = 'skins';
+            document.getElementById('item-modal-title').innerText = 'Add New Skin to Gallery';
+        }
+
+        // WORLDS MANAGEMENT
+        function renderWorldsTable() {
+            const tbody = document.getElementById('worlds-table-body');
+            const worlds = globalItems.filter(item => item.tag === 'maps');
+            
+            tbody.innerHTML = worlds.map((world, index) => `
+                <tr>
+                    <td><strong>${index + 1}</strong></td>
+                    <td><img src="${world.img_url}" class="table-thumb" onerror="this.src='images/dark_fantasy.jpeg'"></td>
+                    <td>
+                        <div><strong>${world.name_en}</strong></div>
+                        <div class="text-muted" style="font-size:12px;">${world.name_ar}</div>
+                    </td>
+                    <td>${world.version || '1.21'}</td>
+                    <td>
+                        <div class="action-btns">
+                            <button class="btn-sm btn-edit" onclick="editItem('${world.id}')">Edit</button>
+                            <button class="btn-sm btn-delete" onclick="deleteItem('${world.id}')">Delete</button>
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function openWorldModal() {
+            openItemModal();
+            document.getElementById('item-tag').value = 'maps';
+            document.getElementById('item-modal-title').innerText = 'Add New World to Gallery';
+        }
+
+        // MC VERSIONS MANAGEMENT
+        function renderVersionsTable() {
+            const tbody = document.getElementById('versions-table-body');
+            tbody.innerHTML = globalVersions.map((v, index) => `
+                <tr>
+                    <td><strong>${index + 1}</strong></td>
+                    <td><span class="tag-badge" style="background: ${v.type === 'official' ? 'var(--accent-color)' : '#444'};">${v.type.toUpperCase()}</span></td>
+                    <td>
+                        <div><strong>${v.name_en}</strong></div>
+                        <div class="text-muted" style="font-size:12px;">${v.name_ar}</div>
+                    </td>
+                    <td><a href="${v.link}" target="_blank" style="color: var(--accent-color); font-size: 12px;">Download Link</a></td>
+                    <td>
+                        <div class="action-btns">
+                            <button class="btn-sm btn-edit" onclick="editMinecraftVersion('${v.id}')">Edit</button>
+                            <button class="btn-sm btn-delete" onclick="deleteMinecraftVersion('${v.id}')">Delete</button>
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function openVersionModal() {
+            document.getElementById('version-id').value = '';
+            document.getElementById('version-form').reset();
+            document.getElementById('version-modal-title').innerText = 'Add New Minecraft Version';
+            document.getElementById('version-modal').style.display = 'flex';
+        }
+
+        function editMinecraftVersion(id) {
+            const v = globalVersions.find(ver => ver.id === id);
+            if (!v) return;
+            document.getElementById('version-id').value = v.id;
+            document.getElementById('version-name-en').value = v.name_en;
+            document.getElementById('version-name-ar').value = v.name_ar;
+            document.getElementById('version-type').value = v.type;
+            document.getElementById('version-link').value = v.link;
+            document.getElementById('version-modal-title').innerText = 'Modify Minecraft Version';
+            document.getElementById('version-modal').style.display = 'flex';
+        }
+
+        async function saveMinecraftVersion() {
+            const version = {
+                id: document.getElementById('version-id').value,
+                name_en: document.getElementById('version-name-en').value,
+                name_ar: document.getElementById('version-name-ar').value,
+                type: document.getElementById('version-type').value,
+                link: document.getElementById('version-link').value,
+                position: globalVersions.length + 1
+            };
+            
+            try {
+                await SupabaseClient.saveMinecraftVersion(version);
+                closeModal('version-modal');
+                showToast("Version saved successfully");
+                initDashboard();
+            } catch (e) {
+                showToast("Failed to save version", "error");
+            }
+        }
+
+        async function deleteMinecraftVersion(id) {
+            if (!confirm("Are you sure you want to delete this version?")) return;
+            try {
+                await SupabaseClient.deleteMinecraftVersion(id);
+                showToast("Version deleted");
+                initDashboard();
+            } catch (e) {
+                showToast("Failed to delete", "error");
+            }
+        }
+
+        // E. ITEMS/MODS MANAGEMENT
+        let itemsSearch = '';
+        let itemsFilterTag = '';
+        let itemsFilterSection = '';
+
+        document.getElementById('mods-search-input').addEventListener('input', (e) => {
+            itemsSearch = e.target.value;
+            renderItemsTable();
+        });
+        document.getElementById('mods-filter-tag').addEventListener('change', (e) => {
+            itemsFilterTag = e.target.value;
+            renderItemsTable();
+        });
+        document.getElementById('mods-filter-section').addEventListener('change', (e) => {
+            itemsFilterSection = e.target.value;
+            renderItemsTable();
+        });
+
+        function renderItemsTable() {
+            const tbody = document.getElementById('items-table-body');
+            
+            // Only show normal items in mods list (items that are NOT sliders, NOT side cards, and NOT skins)
+            const filtered = globalItems.filter(item => {
+                if (item.is_slider || item.is_side_card || item.tag === 'skins') return false;
+                if (itemsSearch) {
+                    const q = itemsSearch.toLowerCase();
+                    const match = item.name_en.toLowerCase().includes(q) || item.name_ar.toLowerCase().includes(q);
+                    if (!match) return false;
+                }
+                if (itemsFilterTag && item.tag !== itemsFilterTag) return false;
+                if (itemsFilterSection && item.section_id !== itemsFilterSection) return false;
+                return true;
+            });
+
+            tbody.innerHTML = filtered.map(item => {
+                const section = globalSections.find(s => s.id === item.section_id);
+                const sectionName = section ? `${section.title_en}` : '<span class="text-muted">None</span>';
+                return `
+                    <tr>
+                        <td><img src="${item.img_url}" class="table-thumb" onerror="this.src='images/dark_fantasy.jpeg'"></td>
+                        <td>
+                            <div><strong>${item.name_en}</strong></div>
+                            <div class="text-muted" style="font-size:12px;">${item.name_ar}</div>
+                        </td>
+                        <td><span class="tag-badge ${item.tag}">${item.tag}</span></td>
+                        <td>${sectionName}</td>
+                        <td><code>${item.version || 'N/A'}</code></td>
+                        <td>${item.file_size || 'N/A'}</td>
+                        <td>
+                            <div class="action-btns">
+                                <button class="btn-sm btn-edit" onclick="editItem('${item.id}')">Edit</button>
+                                <button class="btn-sm btn-delete" onclick="deleteItem('${item.id}')">Delete</button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        // Dynamic Gallery Lists
+        function addGalleryImageRow(val = '') {
+            const container = document.getElementById('gallery-images-rows');
+            const div = document.createElement('div');
+            div.className = 'dynamic-item-row';
+            div.innerHTML = `
+                <input type="url" class="form-input gallery-image-url" placeholder="https://..." value="${val}" required>
+                <button type="button" class="btn-sm btn-delete" onclick="this.parentElement.remove()" style="padding:12px;">Remove</button>
+            `;
+            container.appendChild(div);
+        }
+
+        function addGalleryVideoRow(val = '') {
+            const container = document.getElementById('gallery-videos-rows');
+            const div = document.createElement('div');
+            div.className = 'dynamic-item-row';
+            div.innerHTML = `
+                <input type="text" class="form-input gallery-video-url" placeholder="https://..." value="${val}" required>
+                <button type="button" class="btn-sm btn-delete" onclick="this.parentElement.remove()" style="padding:12px;">Remove</button>
+            `;
+            container.appendChild(div);
+        }
+
+        function openItemModal() {
+            document.getElementById('item-form').reset();
+            document.getElementById('item-id').value = '';
+            document.getElementById('gallery-images-rows').innerHTML = '';
+            document.getElementById('gallery-videos-rows').innerHTML = '';
+            document.getElementById('item-modal-title').innerText = 'Upload Mod to Database';
+            document.getElementById('item-modal').style.display = 'flex';
+        }
+
+        function editItem(id) {
+            const item = globalItems.find(i => i.id === id);
+            if (!item) return;
+
+            document.getElementById('item-id').value = item.id;
+            document.getElementById('item-name-en').value = item.name_en;
+            document.getElementById('item-name-ar').value = item.name_ar;
+            document.getElementById('item-version').value = item.version || '1.21';
+            document.getElementById('item-file-size').value = item.file_size || '0 KB';
+            document.getElementById('item-tag').value = item.tag;
+            document.getElementById('item-section-id').value = item.section_id || '';
+            document.getElementById('item-img-url').value = item.img_url;
+            document.getElementById('item-download-url').value = item.download_url || '#';
+            document.getElementById('item-desc-en').value = item.description_en || '';
+            document.getElementById('item-desc-ar').value = item.description_ar || '';
+
+            const imagesRows = document.getElementById('gallery-images-rows');
+            imagesRows.innerHTML = '';
+            const images = item.gallery_images || [];
+            images.forEach(img => addGalleryImageRow(img));
+
+            const videosRows = document.getElementById('gallery-videos-rows');
+            videosRows.innerHTML = '';
+            const videos = item.gallery_videos || [];
+            videos.forEach(vid => addGalleryVideoRow(vid));
+
+            document.getElementById('item-modal-title').innerText = 'Modify Mod Catalog Properties';
+            document.getElementById('item-modal').style.display = 'flex';
+        }
+
+        async function saveItem() {
+            const id = document.getElementById('item-id').value;
+            const gallery_images = Array.from(document.querySelectorAll('.gallery-image-url')).map(input => input.value).filter(val => val.trim() !== '');
+            const gallery_videos = Array.from(document.querySelectorAll('.gallery-video-url')).map(input => input.value).filter(val => val.trim() !== '');
+
+            const item = {
+                name_en: document.getElementById('item-name-en').value,
+                name_ar: document.getElementById('item-name-ar').value,
+                tag: document.getElementById('item-tag').value,
+                section_id: document.getElementById('item-section-id').value || null,
+                img_url: document.getElementById('item-img-url').value,
+                download_url: document.getElementById('item-download-url').value,
+                version: document.getElementById('item-version').value,
+                file_size: document.getElementById('item-file-size').value,
+                description_en: document.getElementById('item-desc-en').value,
+                description_ar: document.getElementById('item-desc-ar').value,
+                gallery_images,
+                gallery_videos,
+                is_slider: false,
+                is_side_card: false,
+                position: id && !id.startsWith("local_") ? globalItems.find(i => i.id === id).position : globalItems.length + 1
+            };
+            if (id) item.id = id;
+
+            try {
+                await SupabaseClient.saveItem(item);
+                closeModal('item-modal');
+                showToast("Mod saved to database catalog!");
+                initDashboard();
+            } catch(e) {
+                console.error(e);
+                showToast("Failed to save mod", "error");
+            }
+        }
+
+        async function deleteItem(id) {
+            if (!confirm("Are you sure you want to permanently delete this mod asset from database?")) return;
+            try {
+                await SupabaseClient.deleteItem(id);
+                showToast("Mod catalog asset removed");
+                initDashboard();
+            } catch(e) {
+                console.error(e);
+                showToast("Failed to delete mod", "error");
+            }
+        }
+
+        // F. SYSTEM CLEANUP
+        async function purgeDummyData() {
+            if (!confirm("⚠️ CAUTION: This will delete all dummy mods (Enderman, Notch, etc.) from Supabase server. Proceed?")) return;
+            
+            const dummyIds = [
+                's1', 's2', 's3', 'sc1', 'sc2', 'sc3', 'sc4', 
+                'm1', 'm2', 'm3', 'm4', 'm5', 'm6', 'm7', 'm8', 'm9', 'm10', 
+                'sk1', 'sk2'
+            ];
+
+            let count = 0;
+            for (const id of dummyIds) {
+                try {
+                    await SupabaseClient.deleteItem(id);
+                    count++;
+                } catch(e) {}
+            }
+            
+            showToast(`Purged ${count} dummy items from database.`);
+            initDashboard();
+        }
+
+        function resetLocalStorage() {
+            if (!confirm("This will clear your local browser cache. Your data on the server is safe. Continue?")) return;
+            localStorage.clear();
+            location.reload();
+        }
+    </script>
+</body>
+</html>

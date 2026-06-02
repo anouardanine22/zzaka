@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="ar" >
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Search - ZXKO Marketplace</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- External CSS -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+        <div class="logo">ZX</div>
+        <div class="sidebar-icons">
+            <!-- Home Icon -->
+            <a href="home.html" class="icon" title="Home" data-tr-title="home">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                    <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                </svg>
+            </a>
+
+            <!-- Versions Icon -->
+            <a href="Versions.html" class="icon" title="Versions" data-tr-title="versions">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
+                    <polyline points="2 17 12 22 22 17"></polyline>
+                    <polyline points="2 12 12 17 22 12"></polyline>
+                </svg>
+            </a>
+
+            <!-- Worlds Icon -->
+            <a href="worlds.html" class="icon" title="Worlds" data-tr-title="worlds">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <line x1="2" y1="12" x2="22" y2="12"></line>
+                    <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+                </svg>
+            </a>
+
+            <!-- Skins Icon -->
+            <a href="Skins.html" class="icon" title="Skins" data-tr-title="skins">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="12" cy="7" r="4"></circle>
+                </svg>
+            </a>
+
+            <!-- Search Icon -->
+            <a href="Search.html" class="icon active" title="Search" data-tr-title="search">
+                <svg viewBox="0 0 24 24">
+                    <circle cx="11" cy="11" r="7"/>
+                    <line x1="16.5" y1="16.5" x2="21" y2="21"/>
+                </svg>
+            </a>
+        </div>
+    </div>
+
+    <div class="navbar">
+        <div class="nav-actions">
+            <div class="search-bar-container" style="flex: 1; max-width: 600px; margin-right: 20px;">
+                <div class="search-input-wrapper">
+                    <svg class="search-icon-nav" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><line x1="16.5" y1="16.5" x2="21" y2="21"/></svg>
+                    <input type="text" class="nav-search-input" placeholder="Search mods, worlds, skins..." data-tr-placeholder="search_placeholder">
+                    <svg class="search-clear-icon" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                </div>
+            </div>
+            <div class="lang-switcher" onclick="toggleLanguage()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
+                <span id="lang-text" data-tr="lang_name">English</span>
+            </div>
+            <a href="admin.html" class="signin" data-tr="signin">Sign In</a>
+        </div>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div class="main">
+        <div class="search-results-container fade show" id="search-results-container">
+            <div class="no-results" id="no-results-placeholder">
+                <div class="no-results-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                    </svg>
+                </div>
+                <h2 data-tr="no_matches">No Matches Found</h2>
+                <p data-tr="no_matches_desc">We couldn't find any content matching your search criteria. Try different keywords.</p>
+            </div>
+            <div class="worlds-grid" id="search-grid" style="display: none;">
+                <!-- Results will be injected here -->
+            </div>
+    <!-- External Script -->
+    <script src="supabase-client.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
